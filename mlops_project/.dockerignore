@@ -17,3 +17,6 @@ venv/
 
 .dvc
 mlruns
+
+artiacts
+models
