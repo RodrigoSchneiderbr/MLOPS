@@ -22,3 +22,5 @@ mlops_project/models/
 __pycache__/
 *.keras
 *.joblib
+
+.dvc
