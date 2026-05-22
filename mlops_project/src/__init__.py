@@ -1,8 +1,10 @@
 import logging
 from dotenv import load_dotenv
+import dagshub
 
 load_dotenv()
 
+dagshub.init(repo_owner='RodrigoSchneiderbr', repo_name='MLOPS', mlflow=True)
 
 # Configuração do log
 logging.basicConfig(

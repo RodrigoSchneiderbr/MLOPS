@@ -15,7 +15,14 @@ from tensorflow.keras.optimizers import Adam
 
 logger = logging.getLogger("src.model_training.train_model")
 
+import mlflow
+import dagshub
 
+# 1. Connect to DagsHub FIRST
+dagshub.init(repo_owner='RodrigoSchneiderbr', repo_name='MLOPS', mlflow=True)
+
+# 2. THEN set the experiment name so it creates it on the server
+mlflow.set_experiment("ml_classification")
 def load_data() -> pd.DataFrame:
     """Load the feature-engineered training data.
 
