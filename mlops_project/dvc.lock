@@ -1,0 +1,126 @@
+schema: '2.0'
+stages:
+  load_data:
+    cmd: python -m src.data_loading.load_data
+    deps:
+    - path: src/data_loading/load_data.py
+      hash: md5
+      md5: 4e715507daa594eef3cf46f08c05185a
+      size: 1478
+    outs:
+    - path: data/raw/raw.csv
+      hash: md5
+      md5: 60eed89dae87160e659c6af539b985e7
+      size: 116757
+  preprocess_data:
+    cmd: python -m src.data_preprocessing.preprocess_data
+    deps:
+    - path: data/raw/raw.csv
+      hash: md5
+      md5: 60eed89dae87160e659c6af539b985e7
+      size: 116757
+    - path: src/data_preprocessing/preprocess_data.py
+      hash: md5
+      md5: c80af8ebc022a428bd0d888aa2f779bc
+      size: 4839
+    params:
+      params.yaml:
+        preprocess_data.random_seed: 42
+        preprocess_data.test_size: 0.2
+    outs:
+    - path: artifacts/[features]_mean_imputer.joblib
+      hash: md5
+      md5: be1f5fd6efd184f3f71f4c9ac91ee395
+      size: 1511
+    - path: data/preprocessed/test_preprocessed.csv
+      hash: md5
+      md5: 4c7e9ba85dcad40f695aa7084c1f82fb
+      size: 26887
+    - path: data/preprocessed/train_preprocessed.csv
+      hash: md5
+      md5: cac85d10ee3337dc6dd33d036f001775
+      size: 106324
+  engineer_features:
+    cmd: python -m src.feature_engineering.engineer_features
+    deps:
+    - path: data/preprocessed/test_preprocessed.csv
+      hash: md5
+      md5: 4c7e9ba85dcad40f695aa7084c1f82fb
+      size: 26887
+    - path: data/preprocessed/train_preprocessed.csv
+      hash: md5
+      md5: cac85d10ee3337dc6dd33d036f001775
+      size: 106324
+    - path: src/feature_engineering/engineer_features.py
+      hash: md5
+      md5: ed6cb87a4124af5a96295a12e102de60
+      size: 3471
+    outs:
+    - path: artifacts/[features]_scaler.joblib
+      hash: md5
+      md5: 08649a16101e874d53daafa8550a1ffc
+      size: 2135
+    - path: data/processed/test_processed.csv
+      hash: md5
+      md5: 7abc9fecb821ea757bd63b1252e9f29a
+      size: 67586
+    - path: data/processed/train_processed.csv
+      hash: md5
+      md5: 0271919e11f3edfd9b2d0f6e16488721
+      size: 268250
+  train:
+    cmd: python -m src.model_training.train_model
+    deps:
+    - path: data/processed/train_processed.csv
+      hash: md5
+      md5: 0271919e11f3edfd9b2d0f6e16488721
+      size: 268250
+    - path: src/model_training/train_model.py
+      hash: md5
+      md5: cb149e3c0faf2be4035667bd39ce5a8a
+      size: 5880
+    params:
+      params.yaml:
+        train.batch_size: 32
+        train.dropout_rate: 0.3
+        train.epochs: 100
+        train.hidden_layer_1_neurons: 64
+        train.hidden_layer_2_neurons: 32
+        train.learning_rate: 0.001
+    outs:
+    - path: artifacts/[target]_one_hot_encoder.joblib
+      hash: md5
+      md5: 9c68e41a114fdb0985121e8d89f055bc
+      size: 617
+    - path: metrics/training.json
+      hash: md5
+      md5: 5732b7661712d61427de4a91061bc165
+      size: 146
+    - path: models/model.keras
+      hash: md5
+      md5: 1a2f5a5b2cbee1761552c94d8ff461f8
+      size: 79407
+  evaluate:
+    cmd: python -m src.model_evaluation.evaluate_model
+    deps:
+    - path: artifacts/[target]_one_hot_encoder.joblib
+      hash: md5
+      md5: 9c68e41a114fdb0985121e8d89f055bc
+      size: 617
+    - path: data/processed/test_processed.csv
+      hash: md5
+      md5: 7abc9fecb821ea757bd63b1252e9f29a
+      size: 67586
+    - path: models/model.keras
+      hash: md5
+      md5: 1a2f5a5b2cbee1761552c94d8ff461f8
+      size: 79407
+    - path: src/model_evaluation/evaluate_model.py
+      hash: md5
+      md5: 3ef87bf65ff2cb3bbc9fb5939fbb2239
+      size: 2931
+    outs:
+    - path: metrics/evaluation.json
+      hash: md5
+      md5: 80c0e7be0f6a47f79ad24a065c802211
+      size: 830
