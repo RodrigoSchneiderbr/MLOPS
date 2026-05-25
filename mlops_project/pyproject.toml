@@ -4,9 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ml_classifier"
-version = "0.3"
+version = "0.4"
 requires-python = ">=3.11"
 dependencies = [
+    "apache-airflow==2.10.5",
     "dagshub==0.5.9",
     "dvc==3.59.1",
     "flask==2.2.5",
